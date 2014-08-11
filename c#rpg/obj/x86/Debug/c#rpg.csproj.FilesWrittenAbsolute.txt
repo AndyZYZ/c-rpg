@@ -1,0 +1,5 @@
+/Users/andyzyz/Projects/c#rpg/c#rpg/obj/x86/Debug/.NETFramework,Version=v4.0.AssemblyAttribute.cs
+/Users/andyzyz/Projects/c#rpg/c#rpg/bin/Debug/c#rpg.exe.mdb
+/Users/andyzyz/Projects/c#rpg/c#rpg/bin/Debug/c#rpg.exe
+/Users/andyzyz/Projects/c#rpg/c#rpg/obj/x86/Debug/c#rpg.exe
+/Users/andyzyz/Projects/c#rpg/c#rpg/obj/x86/Debug/c#rpg.exe.mdb

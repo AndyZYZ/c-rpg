@@ -23,7 +23,8 @@ namespace crpg
 	class Mob
 	{
 		public int hp;
-		protected int atk;
+		protected int minatk;
+		protected int maxatk;
 		//protected Item award;
 		public int score;
 		public string name;
@@ -49,7 +50,9 @@ namespace crpg
 		public void Atk(Player target)
 		{
 			Console.Write ("{0} attacked {1} !\n", this.name,target.name);
-			target.TakeDamage (this.atk);
+			Random r = new Random ();
+			int damage = r.Next (this.minatk, this.maxatk + 1);
+			target.TakeDamage (damage);
 		}
 
 		public void Debug()
@@ -65,7 +68,8 @@ namespace crpg
 		{
 			this.name = name;
 			this.hp = 7;
-			this.atk = 3;
+			this.maxatk = 4;
+			this.minatk = 2;
 			this.score = 3;
 			//this.Debug();
 		}
@@ -77,7 +81,8 @@ namespace crpg
 		{
 			this.name = name;
 			this.hp = 4;
-			this.atk = 1;
+			this.maxatk = 3;
+			this.minatk = 1;
 			this.score = 1;
 			//this.Debug();
 		}
@@ -89,7 +94,8 @@ namespace crpg
 		{
 			this.name = name;
 			this.hp = 10;
-			this.atk = 3;
+			this.maxatk = 5;
+			this.minatk = 3;
 			this.score = 5;
 			//this.Debug();
 		}
@@ -207,10 +213,12 @@ namespace crpg
 				if (flag == 0) {
 					player.Atk (mob);
 					flag = 1;
+					System.Threading.Thread.Sleep (1000);
 					Battle (flag,player, mob);
 				} else {
 					mob.Atk (player);
 					flag = 0;
+					System.Threading.Thread.Sleep (1000);
 					Battle (flag,player, mob);
 				}
 			}

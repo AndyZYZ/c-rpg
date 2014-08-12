@@ -1,53 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace crpg
 {
-	//物品 
-	class Item
+	//游戏角色类
+	class Creature
 	{
-		public int addatk;
-		public int addhp;
 		public string name;
 
-		public Item(string name,int addatk,int addhp)
-		{
-			this.name = name;
-			this.addatk = addatk;
-			this.addhp = addhp;
-			Console.Write ("{0} created!\n", this.name);
-		}
-
-	}
-
-	//野怪
-	class Mob
-	{
 		public int hp;
-		protected int minatk;
-		protected int maxatk;
-		//protected Item award;
-		public int score;
-		public string name;
+		public int maxatk;
+		public int minatk;
 
-		//public Mob(string name,int hp,int atk,Item award)
-		public Mob(string name)
-		{
-			this.name = name;
-			//Console.Write ("{0} created!\n", this.name);
-		}
-
-		public void TakeDamage(int atk)
-		{
-			this.hp -= atk;
-			Console.Write ("{0} lost {1} hp.\n", this.name,atk);
-			if (this.hp <= 0) {
-				Console.Write ("{0} died!\n",this.name);
-				//GameFuction.RandomAward ();
-			}
-		}
-
-		//玩家和野怪类都有攻击方法，此处可优化
-		public void Atk(Player target)
+		public void Atk(Creature target)
 		{
 			Console.Write ("{0} attacked {1} !\n", this.name,target.name);
 			Random r = new Random ();
@@ -55,10 +20,37 @@ namespace crpg
 			target.TakeDamage (damage);
 		}
 
+		public void TakeDamage(int atk)
+		{
+			this.hp -= atk;
+			Console.Write ("{0} lost {1} hp.\n", this.name,atk);
+		}
+	}
+		
+
+	//野怪
+	class Mob:Creature
+	{
+		public int score;
+		public Item award;
+
+		//public Mob(string name,int hp,int atk,Item award)
+		public Mob(string name)
+		{
+			this.name = name;
+			//Console.Write ("{0} created!\n", this.name);
+		}
+			
 		public void Debug()
 		{
 			Console.Write ("{0} created!", this.name);
 		}
+
+		public void DeathAward(Player player)
+		{
+			player.inventorylist.Add (this.award);
+		}
+
 	}
 
 	//野怪种类
@@ -67,9 +59,9 @@ namespace crpg
 		public Goblin(string name):base("")
 		{
 			this.name = name;
-			this.hp = 7;
-			this.maxatk = 4;
-			this.minatk = 2;
+			this.hp = 70;
+			this.maxatk = 20;
+			this.minatk = 10;
 			this.score = 3;
 			//this.Debug();
 		}
@@ -80,10 +72,10 @@ namespace crpg
 		public Slime(string name):base("")
 		{
 			this.name = name;
-			this.hp = 4;
-			this.maxatk = 3;
-			this.minatk = 1;
-			this.score = 1;
+			this.hp = 40;
+			this.maxatk = 15;
+			this.minatk = 5;
+			this.score = 10;
 			//this.Debug();
 		}
 	}
@@ -93,64 +85,64 @@ namespace crpg
 		public Troll (string name):base("")
 		{
 			this.name = name;
-			this.hp = 10;
-			this.maxatk = 5;
-			this.minatk = 3;
+			this.hp = 100;
+			this.maxatk = 25;
+			this.minatk = 15;
 			this.score = 5;
+			this.award = new HealthPotion ("health potion");
 			//this.Debug();
 		}
 
 	}
 
 
-
-
-
 	//玩家
-	class Player
+	class Player:Creature
 	{
-		public int hp;
-		public int atk;
 		public Item equip;
 		public int score;
+		public List<Item> inventorylist = new List<Item>();
+		//protected Item[] inventory = inventorylist.ToArray();
+		
 
-		public string name;
 
 		public Player(string name)
 		{
 			this.name = name;
-			this.hp = 20;
+			this.hp = 200;
 			//this.equip = equip;
 			this.score = 0;
-			this.atk = 3;
+			this.minatk = 15;
+			this.maxatk = 30;
 			//Console.Write ("{0} created!\n", this.name);
 		}
-	
 
-		public void Atk(Mob target)
-		{
-			Console.Write ("{0} attacked {1} !\n", this.name,target.name);
-			target.TakeDamage (this.atk);
-		}
-
-		public void Equip(Item item)
+		/*public void Equip(Item item)
 		{
 			this.hp += item.addhp;
 			this.atk += item.addatk;
 			this.equip = item;
-			Console.Write ("{0} equiped {1}.\n", this.name,this.equip.name);
-		}
+			Console.Write ("{0} equiped {1}.\n", this.name, this.equip.name);
+		}*/
+	}
 
-		public void TakeDamage(int atk)
+
+	//物品 
+	class Item
+	{
+		public int addatk;
+		public int addhp;
+		public string name;
+	}
+
+	class HealthPotion:Item
+	{
+		public HealthPotion(string name)
 		{
-			this.hp -= atk;
-			Console.Write ("{0} lost {1} hp.\n", this.name,atk);
-			//if (this.hp <= 0) {
-				//Console.Write ("You died! Game Over!");
-			//}
+			this.name = name;
+			this.addhp = 20;
+			this.addatk = 0;
 		}
-
-
 	}
 
     class GameFuction
@@ -189,12 +181,15 @@ namespace crpg
 
 		public static void Menu(Player player)
 		{
-			Console.Write("{0}\nHP:{1}\nATK:{2}\nScore:{3}\nWhat are you going to do:",player.name,player.hp,player.atk,player.score);
+			Console.Write("{0}\nHP:{1}\nATK:{2}-{3}\nScore:{4}\nWhat are you going to do:",player.name,player.hp,player.minatk,player.maxatk,player.score);
 			string todo = Console.ReadLine ();
 
 			switch (todo) {
 			case "adv":
 				GameFuction.ToBattle (player, GameFuction.RandomEngage ());
+				break;
+			case "itm":
+				GameFuction.ShowItem (player);
 				break;
 			}
 		}
@@ -206,6 +201,10 @@ namespace crpg
 					GameFuction.GameOver (player);
 				} else {
 					Console.Write ("You killed {0}\n", mob.name);
+					if (mob.award != null) {
+						mob.DeathAward (player);
+						Console.Write ("You've gained a {0}.\n", mob.award.name);
+					}
 					player.score += mob.score;
 					GameFuction.Menu (player);
 				}
@@ -230,14 +229,21 @@ namespace crpg
 			Battle (flag, player, mob);
 		}
 	
-
-
 		public static void GameOver(Player player)
 		{
 			Console.Write("You died!\nGame Over!\nYour score:{0}\n",player.score);
 		}
-			
 
+		public static void ShowItem (Player player)
+		{
+			Item[] items = player.inventorylist.ToArray();
+			for (int i = 0;i<items.Length;i++){
+				Console.Write (items[i].name);
+			}
+			Console.Write("\n");
+			Menu (player);
+		}
+			
 	}
 
 

@@ -132,16 +132,16 @@ namespace crpg
 
 		public void UseItem(Item item)
 		{
-			if (this.inventory [item.name] > 0) {
+			Console.Write ("Which item do you want to use:?\n");
+			string itemname = Console.ReadLine ();
+			if (this.inventory [itemname] > 0) {
 				this.maxatk += item.addatk;
 				this.minatk += item.addatk;
 				this.hp += item.addhp;
-				this.inventory [item.name]--;
+				this.inventory [itemname]--;
 				Console.Write ("You used a {0}.\n", item.name);
-				GameFuction.Menu (this);
 			} else {
 				Console.Write ("You don't have that item\n.");
-				GameFuction.Menu (this);
 			}
 		}
 	}
@@ -269,22 +269,13 @@ namespace crpg
 		public static void ShowItem (Player player)
 		{
 			foreach (KeyValuePair<string, int> pair in player.inventory)
+
 			{
+
 				Console.WriteLine("{0}:{1}   ", pair.Key, pair.Value);
-			}
-			Console.Write ("input item name to use:");
-			string itemname = Console.ReadLine ();
 
-			switch (itemname) {
-			case "health potion":
-				player.UseItem (new HealthPotion ("health potion"));
-				break;
-			default:
-				Console.Write ("You don't have that item.\n");
-				GameFuction.Menu (player);
-				break;
 			}
-
+			Menu (player);
 		}
 			
 	}
